@@ -148,3 +148,33 @@ describe("GET /recommendations", () => {
     }
   });
 });
+
+describe("should get random recommendations", () => {
+  it("should get random recommendation when result is less than 0.7", async () => {
+    jest.spyOn(Math, "random").mockReturnValueOnce(0.6);
+    jest.spyOn(recommendationRepository, "findAll").mockResolvedValueOnce([
+      {
+        id: 10,
+        name: "So Happy I Could Die",
+        youtubeLink: "test",
+        score: 30,
+      },
+    ]);
+    const recommendation = await recommendationService.getRandom();
+    expect(recommendationRepository.findAll).toBeCalled();
+    expect(recommendation).toBeInstanceOf(Object);
+  });
+  it("should get random recommendation when result is less than 0.7", async () => {
+    jest.spyOn(Math, "random").mockReturnValueOnce(0.8);
+    jest.spyOn(recommendationRepository, "findAll").mockResolvedValueOnce([
+      {
+        id: 10,
+        name: "So Happy I Could Die",
+        youtubeLink: "test",
+        score: 1,
+      },
+    ]);
+    await recommendationService.getRandom();
+    expect(recommendationRepository.findAll).toBeCalled();
+  });
+});
