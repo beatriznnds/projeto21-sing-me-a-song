@@ -178,3 +178,22 @@ describe("should get random recommendations", () => {
     expect(recommendationRepository.findAll).toBeCalled();
   });
 });
+
+describe("should get top recommendations", () => {
+  it("should get top recommendations for user", async () => {
+    const recommendation = await recommendationFactory.createRecommendation();
+    jest
+      .spyOn(recommendationRepository, "getAmountByScore")
+      .mockResolvedValueOnce([
+        { id: 1, ...recommendation, score: 100 },
+        { id: 2, ...recommendation, score: 90 },
+        { id: 3, ...recommendation, score: 50 },
+        { id: 4, ...recommendation, score: 20 },
+        { id: 5, ...recommendation, score: 5 },
+      ]);
+    const result = await recommendationService.getTop(5);
+    expect(recommendationRepository.getAmountByScore).toHaveBeenCalled();
+    expect(result.length).toBe(5);
+    expect(result).toBeInstanceOf(Array);
+  });
+});
