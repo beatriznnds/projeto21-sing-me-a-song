@@ -177,6 +177,16 @@ describe("should get random recommendations", () => {
     await recommendationService.getRandom();
     expect(recommendationRepository.findAll).toBeCalled();
   });
+  it("shouldn't find random recommendation when it doesn't exist", async () => {
+    jest.spyOn(recommendationRepository, "findAll").mockResolvedValue([]);
+    try {
+      await recommendationService.getRandom();
+      fail();
+    } catch (e) {
+      expect(recommendationRepository.findAll).toBeCalled();
+      expect(e.type).toBe("not_found");
+    }
+  });
 });
 
 describe("should get top recommendations", () => {
