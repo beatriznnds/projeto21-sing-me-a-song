@@ -116,3 +116,35 @@ describe("voting on recommendations", () => {
     expect(recommendationRepository.remove).toBeCalled();
   });
 });
+
+describe("GET /recommendations", () => {
+  it("should be get all recommendations", async () => {
+    jest.spyOn(recommendationRepository, "findAll").mockResolvedValueOnce([]);
+    const result = await recommendationService.get();
+    expect(recommendationRepository.findAll).toHaveBeenCalled();
+    expect(result).toBeInstanceOf(Array);
+  });
+  it("should get recommendation with valid id", async () => {
+    jest.spyOn(recommendationRepository, "find").mockResolvedValueOnce({
+      id: 5,
+      name: "So Happy I Could Die",
+      youtubeLink: "test",
+      score: 20,
+    });
+    const result = await recommendationService.getById(5);
+    expect(recommendationRepository.find).toBeCalled();
+    expect(result).toBeInstanceOf(Object);
+  });
+  it("shouldn't be able to get recommendation when id doesn't exist", async () => {
+    jest
+      .spyOn(recommendationRepository, "find")
+      .mockImplementationOnce(() => null);
+    try {
+      await recommendationService.getById(+faker.random.numeric());
+      fail();
+    } catch (e) {
+      expect(recommendationRepository.find).toBeCalled();
+      expect(e.type).toBe("not_found");
+    }
+  });
+});
