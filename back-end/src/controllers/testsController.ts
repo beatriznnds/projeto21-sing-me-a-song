@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { recommendationService } from "../services/recommendationsService";
+import { recommendationRepository } from "../repositories/recommendationRepository";
 
 export async function reset(req: Request, res: Response) {
-  await recommendationService.reset();
+  await recommendationRepository.reset();
   res.sendStatus(200);
 }
